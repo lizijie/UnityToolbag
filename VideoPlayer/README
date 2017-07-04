@@ -1,0 +1,44 @@
+视频几个关键特性：
+压缩率
+存储格式/封装技术/容器)(ogg、ogv、mp4、avi等)
+编码技术 H.264\ MPEG4\VP9
+
+
+播放前准备
+Note: This is a Pro/Advanced feature only. Movie Textures are animated Textures that are created from a video file. By placing a video file in your project’s Assets Folder, you can import the video to be used exactly as you would use a regular Texture.
+Video files are imported via Apple QuickTime. Supported file types are what your QuickTime installation can play (usually .mov, .mpg, .mpeg, .mp4, .avi, .asf). On Windows movie importing requires Quicktime to be installed (download here).
+
+MoiveTexture 输出Mobie平台时，会被Strip
+https://forum.unity3d.com/threads/movietexture-has-no-definition-for-iphone-android.73338/
+
+mp4错误
+QuickTime安装，需确保关联到后缀名
+
+
+未解决的问题
+使用Handheld.PlayFullScreenMovie在移动端播放视频的时候 视频无法立刻对横竖屏切换做出响应怎么办？
+
+只能存放在StreamAsset目录。不能动态视频
+
+监听播放结束
+但是如果中间过程停止播放的话呢？
+
+为什么不放在Android原生处理
+http://www.taidous.com/article-860-1.html
+
+
+Unity 5.6 增加Video组件。
+http://justcode.me/unity2d/how-to-play-videos-on-unity-using-new-videoplayer/
+
+本文参考文章
+http://www.cnblogs.com/zsb517/p/4060814.html
+
+
+有尺寸限制
+On Windows Phone and Windows Store Apps, there generally isn't movie resolution or bitrate limit, however, higher resolution or bitrate movies will consume more memory for decoding. Weaker devices will also start skipping frames much sooner at extremely high resolutions. For example, Nokia Lumia 620 can only play videos smoothly up to 1920x1080. For these platforms, you can find list of supported formats here: Supported audio and video formats on Windows Store
+
+为何ogv视频在PC Unity能播放，但在Android/IOS上却不能
+Unity视频播放采用Theora编码。(https://zh.wikipedia.org/wiki/Unity_(%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E))。
+
+Theora编码支持ogv、ogg。为什么在android就不能播放？
+
