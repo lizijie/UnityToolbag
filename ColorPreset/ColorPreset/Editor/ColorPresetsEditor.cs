@@ -70,13 +70,17 @@ public class ColorPresetsEditWindow: EditorWindow
     {
         Type typeClassPresetLocaton = System.Type.GetType("UnityEditor.PresetLibraryLocations,UnityEditor");
         MethodInfo _GetAvailableFilesWithExtensionOnTheHDDFunc = typeClassPresetLocaton.GetMethod("GetAvailableFilesWithExtensionOnTheHDD");
-        Type typeEnumPresetLocation = System.Type.GetType("UnityEditor.PresetFileLocation,UnityEditor");
+        Type enumPresetLocation = System.Type.GetType("UnityEditor.PresetFileLocation,UnityEditor");
 
         // 获取颜色库的绝对路径
-        System.Object objProjectLocation = Enum.Parse(typeEnumPresetLocation, "ProjectFolder");
-        System.Object objPreferenceLocation = Enum.Parse(typeEnumPresetLocation, "PreferencesFolder");
-        List<string> projectColorList = (List<string>)_GetAvailableFilesWithExtensionOnTheHDDFunc.Invoke(null, new System.Object[2]{objProjectLocation,"colors"});
-        List<string> preferenceColorList = (List<string>)_GetAvailableFilesWithExtensionOnTheHDDFunc.Invoke(null, new System.Object[2] { objPreferenceLocation, "colors" });
+        // 全局路径。多个Unity项目间可以共享
+        System.Object parmPreferenceLocation = Enum.Parse(enumPresetLocation, "PreferencesFolder");
+        List<string> preferenceColorList = (List<string>)_GetAvailableFilesWithExtensionOnTheHDDFunc.Invoke(null, new System.Object[2] { parmPreferenceLocation, "colors" });
+        // 本地项目路径。仅被当前Unity项目使用。
+        System.Object parmProjectLocation = Enum.Parse(enumPresetLocation, "ProjectFolder");
+
+        // 收集所有颜色库
+        List<string> projectColorList = (List<string>)_GetAvailableFilesWithExtensionOnTheHDDFunc.Invoke(null, new System.Object[2]{parmProjectLocation,"colors"});
         this.colorLibs.Clear();
         for (int i = 0, iMax = preferenceColorList.Count; i < iMax; ++i)
             this.colorLibs.Add(preferenceColorList[i]);
@@ -175,19 +179,19 @@ public class ColorPresetsEditWindow: EditorWindow
         Debug.Log("_codePath = " + _codePath);
 
         // 获取颜色样式
-        System.Object[] objectColorPresetLibrary = UnityEditorInternal.InternalEditorUtility.LoadSerializedFileAndForget(_colorPath);
+        System.Object[] instanceArray = UnityEditorInternal.InternalEditorUtility.LoadSerializedFileAndForget(_colorPath);
         System.Type typeColorPresetLibrary = System.Type.GetType("UnityEditor.ColorPresetLibrary,UnityEditor");
         System.Reflection.MethodInfo _CountFunc = typeColorPresetLibrary.GetMethod("Count");
         System.Reflection.MethodInfo _GetNameFunc = typeColorPresetLibrary.GetMethod("GetName");
         System.Reflection.MethodInfo _GetPresetFunc = typeColorPresetLibrary.GetMethod("GetPreset");
 
         string genCode = "";
-        System.Object obj = objectColorPresetLibrary[0];
-        int count = (int)_CountFunc.Invoke(obj, null);
+        System.Object colorLibIntance = instanceArray[0];
+        int count = (int)_CountFunc.Invoke(colorLibIntance, null);
         for (int i = 0; i < count; ++i)
         {
-            string name = (string)_GetNameFunc.Invoke(obj, new System.Object[1] { i });
-            Color col = (Color)_GetPresetFunc.Invoke(obj, new System.Object[1] { i });
+            string name = (string)_GetNameFunc.Invoke(colorLibIntance, new System.Object[1] { i });
+            Color col = (Color)_GetPresetFunc.Invoke(colorLibIntance, new System.Object[1] { i });
             string hexStr = ColorPresets.ColorToHexString(col);
             genCode += string.Format(FORMAT_COLORITEM, ColorPresets.COLOR_PREFIX, name, hexStr);
         }
